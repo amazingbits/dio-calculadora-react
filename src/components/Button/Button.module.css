@@ -1,0 +1,19 @@
+.button {
+  padding: 0.6rem;
+  outline: none;
+  border: 1px solid #ddd;
+  color: #414141;
+  font-size: 1.4rem;
+  color: #414141;
+  cursor: pointer;
+  transition: all 0.3s linear;
+  background: white;
+}
+
+.button:hover {
+  filter: brightness(95%);
+}
+
+.button:active {
+  filter: brightness(85%);
+}
