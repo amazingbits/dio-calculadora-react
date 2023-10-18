@@ -4,77 +4,49 @@ import Button from "./components/Button/Button";
 
 function App() {
   const [screenValue, setScreenValue] = React.useState("0");
-  const operationOptions = ["+", "-", "/", "X"];
+  const operationOptions = ["+", "-", "/", "*"];
 
-  function sum(n1, n2) {
-    return n1 + n2;
-  }
-
-  function subtract(n1, n2) {
-    return n1 - n2;
-  }
-
-  function divide(n1, n2) {
-    return n1 / n2;
-  }
-
-  function multiply(n1, n2) {
-    return n1 * n2;
-  }
-
-  function operation(str) {
-    if (str.includes("+")) {
-      let exp = str.split("+");
-      if (exp.length === 2) {
-        let op = sum(Number(exp[0]), Number(exp[1]));
-        setScreenValue(op.toString());
-      }
-    } else if (str.includes("-")) {
-      let exp = str.split("-");
-      if (exp.length === 2) {
-        let op = subtract(Number(exp[0]), Number(exp[1]));
-        setScreenValue(op.toString());
-      }
-    } else if (str.includes("/")) {
-      let exp = str.split("/");
-      if (exp.length === 2) {
-        let op = divide(Number(exp[0]), Number(exp[1]));
-        setScreenValue(op.toString());
-      }
-    } else if (str.includes("X")) {
-      let exp = str.split("X");
-      if (exp.length === 2) {
-        let op = multiply(Number(exp[0]), Number(exp[1]));
-        setScreenValue(op.toString());
-      }
-    } else {
-      setScreenValue("0");
+  function makeOperation(n1, n2, operation) {
+    if (operationOptions.includes(operation)) {
+      return eval(`${n1} ${operation} ${n2}`);
     }
+    return false;
+  }
+
+  function getResults(screenText) {
+    const operator = screenText.replace(/[0-9]/g, "");
+    if (operationOptions.includes(operator)) {
+      const exp = screenText.split(operator);
+      if (exp.length === 2) {
+        return makeOperation(Number(exp[0]), Number(exp[1]), operator);
+      }
+      return false;
+    }
+    return false;
   }
 
   function handleClick({ target }) {
     const clickedValue = target.value;
+    const operator = screenValue.replace(/[0-9]/g, "");
     if (operationOptions.includes(clickedValue)) {
-      // É uma operação matemática
       if (screenValue === "0") {
-        alert("Operação inválida!");
+        alert("Operação inválida");
         return;
       }
-      if (
-        screenValue.includes("+") ||
-        screenValue.includes("-") ||
-        screenValue.includes("/") ||
-        screenValue.includes("X")
-      ) {
+      if (operationOptions.includes(operator)) {
         alert("Só é possível efetuar operações com dois números");
         return;
-      } else {
-        setScreenValue(screenValue + clickedValue);
       }
+      setScreenValue(screenValue + clickedValue);
     } else if (clickedValue === "C") {
       setScreenValue("0");
     } else if (clickedValue === "=") {
-      operation(screenValue);
+      const results = getResults(screenValue);
+      if (!results) {
+        alert("Houve um problema com a operação");
+        return;
+      }
+      setScreenValue(results.toString());
     } else {
       if (screenValue === "0") {
         setScreenValue(clickedValue);
@@ -90,10 +62,18 @@ function App() {
         <Screen value={screenValue} disabled />
         <div className="buttons">
           <div className="grid grid-4">
-            <Button onClick={handleClick}>+</Button>
-            <Button onClick={handleClick}>-</Button>
-            <Button onClick={handleClick}>/</Button>
-            <Button onClick={handleClick}>X</Button>
+            <Button onClick={handleClick} title="Somar">
+              +
+            </Button>
+            <Button onClick={handleClick} title="Subtrair">
+              -
+            </Button>
+            <Button onClick={handleClick} title="Dividir">
+              /
+            </Button>
+            <Button onClick={handleClick} title="Multiplicar">
+              *
+            </Button>
           </div>
 
           <div className="grid grid-3">
@@ -115,11 +95,13 @@ function App() {
           </div>
 
           <div className="grid grid-3">
-            <Button color="#e3873b" onClick={handleClick}>
+            <Button color="#e3873b" onClick={handleClick} title="Limpar tela">
               C
             </Button>
             <Button onClick={handleClick}>0</Button>
-            <Button onClick={handleClick}>=</Button>
+            <Button onClick={handleClick} title="Calcular resultado">
+              =
+            </Button>
           </div>
         </div>
       </div>
